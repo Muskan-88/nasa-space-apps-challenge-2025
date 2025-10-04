@@ -1,0 +1,60 @@
+.home-container {
+  background: linear-gradient(-45deg, #0a1270, #2d2daa, #1a1a50, #4545c8);
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+@keyframes gradientBG {
+  0% { 
+    background-position: 0% 50%; 
+  }
+  50% { 
+    background-position: 100% 50%; 
+  }
+  100% { 
+    background-position: 0% 50%; 
+  }
+}
+
+.content {
+  text-align: center;
+  color: white;
+  max-width: 800px;
+}
+
+.content h1 {
+  font-size: 48px;
+  margin-bottom: 16px;
+  font-weight: bold;
+}
+
+.content h2 {
+  font-size: 32px;
+  margin-bottom: 32px;
+  font-weight: 300;
+}
+
+.content p {
+  font-size: 19px;
+  line-height: 1.6;
+  font-weight: 300;
+}
+
+@media (max-width: 768px) {
+  .content h1 {
+    font-size: 40px;
+  }
+  
+  .content h2 {
+    font-size: 24px;
+  }
+  
+  .content p {
+    font-size: 16px;
+  }
+}
