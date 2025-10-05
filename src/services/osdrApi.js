@@ -2,9 +2,6 @@
 import axios from 'axios';
 import { fetchCSVPublications, searchCSVPublications } from './csvParser';
 
-const BASE_URL = '/osdr/data';  // Relative URL - proxy handles it
-
-// src/services/osdrApi.js
 export const searchPublications = async (searchQuery, from = 0, size = 50, source = 'all') => {
   try {
     console.log(`Searching for "${searchQuery}" from=${from} size=${size}, source=${source}`);
@@ -14,25 +11,35 @@ export const searchPublications = async (searchQuery, from = 0, size = 50, sourc
     let csvHits = [];
     let csvTotal = 0;
 
-    // 🔹 NASA OSDR search
+    // NASA OSDR search via backend proxy
     if (source === 'all' || source === 'nasa') {
-      const osdrResponse = await axios.get(`${BASE_URL}/search`, {
-        params: {
-          term: searchQuery,
-          type: 'cgene',
-          size: size,
-          from: from
-        },
-        timeout: 10000,
-      });
+      try {
+        console.log(`NASA OSDR Search via backend: term="${searchQuery}" size=${size} from=${from}`);
+        
+        // Use backend proxy to avoid CORS issues
+        const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001';
+        const osdrResponse = await axios.get(`${API_BASE_URL}/api/nasa-search`, {
+          params: {
+            term: searchQuery,
+            type: 'cgene',
+            size: size,
+            from: from
+          },
+          timeout: 15000,
+        });
 
-      const osdrData = osdrResponse.data;
-      osdrHits = osdrData?.hits?.hits || [];
-      osdrTotal = osdrData?.hits?.total?.value ?? osdrData?.hits?.total ?? 0;
-      console.log(`NASA OSDR: ${osdrHits.length} results`);
+        const osdrData = osdrResponse.data;
+        osdrHits = osdrData?.hits?.hits || [];
+        osdrTotal = osdrData?.hits?.total?.value ?? osdrData?.hits?.total ?? 0;
+        console.log(`NASA OSDR via backend: ${osdrHits.length} results out of ${osdrTotal} total`);
+      } catch (osdrError) {
+        console.error('NASA OSDR Backend Error:', osdrError.message);
+        console.error('NASA OSDR Error Details:', osdrError.response?.data || osdrError);
+        // Continue with CSV only if NASA fails
+      }
     }
 
-    // 🔹 CSV Publications search
+    // CSV Publications search
     if ((source === 'all' || source === 'csv') && from === 0) {
       try {
         const csvData = await fetchCSVPublications();
@@ -44,7 +51,7 @@ export const searchPublications = async (searchQuery, from = 0, size = 50, sourc
       }
     }
 
-    // 🔹 Combine results
+    // Combine results
     const combinedHits = [...csvHits, ...osdrHits];
     const combinedTotal = osdrTotal + csvTotal;
 
@@ -56,20 +63,22 @@ export const searchPublications = async (searchQuery, from = 0, size = 50, sourc
   }
 };
 
-
-// Keep your existing getAllStudies and advancedSearch functions
 export const getAllStudies = async () => {
   try {
     console.log('Fetching all studies...');
     
-    const searchUrl = `${BASE_URL}/search?term=*&type=cgene&size=100&from=0`;
-    
-    const response = await axios.get(`https://api.allorigins.win/get`, {
-      params: { url: searchUrl },
+    const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001';
+    const response = await axios.get(`${API_BASE_URL}/api/nasa-search`, {
+      params: {
+        term: '*',
+        type: 'cgene',
+        size: 100,
+        from: 0
+      },
       timeout: 15000
     });
     
-    const data = JSON.parse(response.data.contents);
+    const data = response.data;
     
     if (data && data.hits) {
       return data.hits.hits || [];
@@ -101,12 +110,13 @@ export const advancedSearch = async (filters) => {
 
     console.log('Advanced search params:', params);
     
-    const searchUrl = `${BASE_URL}/search`;
-    const response = await axios.get(`https://api.allorigins.win/get`, {
-      params: { url: `${searchUrl}?${new URLSearchParams(params)}` }
+    const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001';
+    const response = await axios.get(`${API_BASE_URL}/api/nasa-search`, {
+      params: params,
+      timeout: 15000
     });
     
-    const data = JSON.parse(response.data.contents);
+    const data = response.data;
     
     if (data && data.hits) {
       return data.hits.hits || [];

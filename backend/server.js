@@ -1,6 +1,7 @@
 const express = require('express');
 const { CohereClient } = require('cohere-ai');
 const cors = require('cors');
+const axios = require('axios');
 require('dotenv').config();
 
 const app = express();
@@ -64,9 +65,36 @@ Only include the sections that were requested: ${sectionsList}`;
   }
 });
 
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+// NASA OSDR Proxy endpoint to bypass CORS
+app.get('/api/nasa-search', async (req, res) => {
+  try {
+    const { term, type = 'cgene', size = 50, from = 0 } = req.query;
+    
+    if (!term) {
+      return res.status(400).json({ error: 'Search term is required' });
+    }
+    
+    console.log(`🔍 NASA OSDR Search: term="${term}" type="${type}" size="${size}" from="${from}"`);
+    
+    const nasaUrl = 'https://osdr.nasa.gov/osdr/data/search';
+    const response = await axios.get(nasaUrl, {
+      params: { term, type, size, from },
+      timeout: 15000,
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'
+      }
+    });
+    
+    console.log(`✅ NASA OSDR Success: ${response.data?.hits?.hits?.length || 0} results`);
+    res.json(response.data);
+    
+  } catch (error) {
+    console.error('❌ NASA OSDR Error:', error.message);
+    res.status(500).json({ 
+      error: 'Failed to fetch NASA OSDR data',
+      details: error.message 
+    });
+  }
 });
 
 app.get('/api/test-models', async (req, res) => {
@@ -84,4 +112,9 @@ app.get('/api/test-models', async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+});
+
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
