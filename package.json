@@ -1,7 +1,6 @@
 {
   "name": "nasa-space-apps-challenge",
   "version": "0.1.0",
-  "proxy": "https://osdr.nasa.gov",
   "private": true,
   "dependencies": {
     "@anthropic-ai/sdk": "^0.65.0",
