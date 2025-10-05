@@ -73,7 +73,7 @@ Assay Type: ${publication['Study Assay Technology Type'] || 'N/A'}
     <div className="summary-page">
         <div className="summary-page-content">
             <button onClick={() => navigate(-1)} className="back-button">
-                ← Back to Results
+                ← Back to Search Results
             </button>
 
             <div className="publication-info">

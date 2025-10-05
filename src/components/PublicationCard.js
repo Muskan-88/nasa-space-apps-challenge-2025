@@ -20,6 +20,7 @@ const PublicationCard = ({ publication }) => {
       }
     }
   };
+
   const handleSummarize = () => {
     // Pass publication data via state
     navigate(`/summary/${accession}`, { 
@@ -28,6 +29,7 @@ const PublicationCard = ({ publication }) => {
       } 
     });
   };
+
   const title = data['Study Title'] || 'Untitled Study';
   const accession = data.Accession || 'N/A';
   const description = data['Study Description'] || 'No description available';
@@ -66,38 +68,15 @@ const PublicationCard = ({ publication }) => {
           </span>
         )}
       </div>
+
       <div className="card-actions">
         <button onClick={handleOpenPublication} className="view-button">
-          View Full Dataset →
+          {isFromCSV ? 'View Full Publication →' : 'View Full Dataset →'}
         </button>
         <button onClick={handleSummarize} className="summarize-button">
           📄 Summarize with AI
         </button>
       </div>
-      {/* Only show NASA-specific metadata for non-CSV entries */}
-      {!isFromCSV && (
-        <div className="card-metadata">
-          {organism && (
-            <span className="metadata-tag">
-              <strong>Organism:</strong> {organism}
-            </span>
-          )}
-          {assayType && (
-            <span className="metadata-tag">
-              <strong>Assay Type:</strong> {assayType}
-            </span>
-          )}
-          {authors && (
-            <span className="metadata-tag metadata-authors">
-              <strong>Authors:</strong> {authors.substring(0, 50)}{authors.length > 50 ? '...' : ''}
-            </span>
-          )}
-        </div>
-      )}
-      
-      <button onClick={handleOpenPublication} className="view-button">
-        {isFromCSV ? 'Read on PubMed Central →' : 'View Full Dataset →'}
-      </button>
     </div>
   );
 };
