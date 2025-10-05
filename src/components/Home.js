@@ -67,11 +67,11 @@ const Home = () => {
   return (
     <div className="home-container">
       <div className="content">
-        <h1>NASA OSDR Publications</h1>
-        <h2>Search the Open Science Data Repository</h2>
+        <h1>Astrobiological Understanding & Research Assistant</h1>
+        <h2>Explore Biological and Physical Science Data</h2>
         <p>
-          Explore space biology research datasets from NASA's Open Science Data Repository. 
-          Search by keywords, organisms, authors, and more.
+          Explore space biology research datasets from NASA's Open Science Data Repository and the 
+          608 Space Biology. Search by keywords, organisms, authors, and more.
         </p>
 
         <SearchBar onSearch={handleSearch} loading={loading || loadingMore} />
