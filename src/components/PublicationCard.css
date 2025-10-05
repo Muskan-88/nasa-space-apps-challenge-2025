@@ -95,3 +95,48 @@
     font-size: 18px;
   }
 }
+
+.card-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.summarize-button {
+  background: rgba(97, 218, 251, 0.15);
+  border: 1px solid rgba(97, 218, 251, 0.5);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex: 1;
+}
+
+.summarize-button:hover {
+  background: rgba(97, 218, 251, 0.25);
+  border-color: rgba(97, 218, 251, 0.8);
+  transform: translateX(4px);
+}
+
+.view-button {
+  background: rgba(97, 218, 251, 0.15);
+  border: 1px solid rgba(97, 218, 251, 0.5);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 0; /* Remove the margin-top since it's now in card-actions */
+  flex: 1;
+}
+
+.view-button:hover {
+  background: rgba(97, 218, 251, 0.25);
+  border-color: rgba(97, 218, 251, 0.8);
+  transform: translateX(4px);
+}

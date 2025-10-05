@@ -2,6 +2,7 @@ import React from "react";
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import NavigationBar from "./components/NavigationBar"; 
 import Home from "./components/Home";
+import SummaryPage from "./components/SummaryPage";
 import "./App.css";
 
 const App = () => {
@@ -10,6 +11,7 @@ const App = () => {
       <NavigationBar />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/summary/:accession" element={<SummaryPage />} />
       </Routes>
     </Router>
   );

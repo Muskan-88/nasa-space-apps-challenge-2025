@@ -1,8 +1,10 @@
 // src/components/PublicationCard.js
+import { useNavigate } from 'react-router-dom';
 import './PublicationCard.css';
 
 const PublicationCard = ({ publication }) => {
   // The data is in publication._source
+  const navigate = useNavigate();
   const data = publication._source || publication;
   
   console.log('Publication data:', data); // DEBUG - check what fields exist
@@ -12,6 +14,15 @@ const PublicationCard = ({ publication }) => {
     if (accession) {
       window.open(`https://osdr.nasa.gov/bio/repo/data/studies/${accession}`, '_blank');
     }
+  };
+
+  const handleSummarize = () => {
+    // Pass publication data via state
+    navigate(`/summary/${accession}`, { 
+      state: { 
+        publication: data 
+      } 
+    });
   };
 
   // Try multiple possible field names
@@ -50,10 +61,14 @@ const PublicationCard = ({ publication }) => {
           </span>
         )}
       </div>
-      
-      <button onClick={handleOpenPublication} className="view-button">
-        View Full Dataset →
-      </button>
+      <div className="card-actions">
+        <button onClick={handleOpenPublication} className="view-button">
+          View Full Dataset →
+        </button>
+        <button onClick={handleSummarize} className="summarize-button">
+          📄 Summarize with AI
+        </button>
+      </div>
     </div>
   );
 };
