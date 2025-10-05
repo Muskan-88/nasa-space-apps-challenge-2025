@@ -1,30 +1,78 @@
 // src/services/osdrApi.js
 import axios from 'axios';
+import { fetchCSVPublications, searchCSVPublications } from './csvParser';
 
-// Use relative URL - the proxy will forward to https://osdr.nasa.gov
-const BASE_URL = '/osdr/data';
+const BASE_URL = '/osdr/data';  // Relative URL - proxy handles it
 
-/**
- * Get all studies
- */
+// src/services/osdrApi.js
+export const searchPublications = async (searchQuery, from = 0, size = 50, source = 'all') => {
+  try {
+    console.log(`Searching for "${searchQuery}" from=${from} size=${size}, source=${source}`);
+
+    let osdrHits = [];
+    let osdrTotal = 0;
+    let csvHits = [];
+    let csvTotal = 0;
+
+    // 🔹 NASA OSDR search
+    if (source === 'all' || source === 'nasa') {
+      const osdrResponse = await axios.get(`${BASE_URL}/search`, {
+        params: {
+          term: searchQuery,
+          type: 'cgene',
+          size: size,
+          from: from
+        },
+        timeout: 10000,
+      });
+
+      const osdrData = osdrResponse.data;
+      osdrHits = osdrData?.hits?.hits || [];
+      osdrTotal = osdrData?.hits?.total?.value ?? osdrData?.hits?.total ?? 0;
+      console.log(`NASA OSDR: ${osdrHits.length} results`);
+    }
+
+    // 🔹 CSV Publications search
+    if ((source === 'all' || source === 'csv') && from === 0) {
+      try {
+        const csvData = await fetchCSVPublications();
+        csvHits = searchCSVPublications(csvData, searchQuery);
+        csvTotal = csvHits.length;
+        console.log(`CSV: ${csvHits.length} results`);
+      } catch (csvError) {
+        console.warn('CSV search failed, continuing with NASA only:', csvError);
+      }
+    }
+
+    // 🔹 Combine results
+    const combinedHits = [...csvHits, ...osdrHits];
+    const combinedTotal = osdrTotal + csvTotal;
+
+    return { hits: combinedHits, total: combinedTotal };
+
+  } catch (error) {
+    console.error('Error searching publications:', error);
+    throw error;
+  }
+};
+
+
+// Keep your existing getAllStudies and advancedSearch functions
 export const getAllStudies = async () => {
   try {
     console.log('Fetching all studies...');
     
-    const response = await axios.get(`${BASE_URL}/search`, {
-      params: {
-        'term': '*',
-        'type': 'cgene',
-        'size': 100,
-        'from': 0
-      },
+    const searchUrl = `${BASE_URL}/search?term=*&type=cgene&size=100&from=0`;
+    
+    const response = await axios.get(`https://api.allorigins.win/get`, {
+      params: { url: searchUrl },
       timeout: 15000
     });
     
-    console.log('All studies response:', response.data);
+    const data = JSON.parse(response.data.contents);
     
-    if (response.data && response.data.hits) {
-      return response.data.hits.hits || [];
+    if (data && data.hits) {
+      return data.hits.hits || [];
     }
     
     return [];
@@ -34,37 +82,6 @@ export const getAllStudies = async () => {
   }
 };
 
-/**
- * Search publications
- */
-// src/services/osdrApi.js
-export const searchPublications = async (searchQuery, from = 0, size = 50) => {
-  try {
-    console.log(`Searching for "${searchQuery}" from=${from} size=${size}`);
-
-    const response = await axios.get(`${BASE_URL}/search`, {
-      params: { term: searchQuery, type: 'cgene', size, from },
-      timeout: 10000,
-    });
-
-    if (response.data && response.data.hits) {
-      const hits = response.data.hits.hits || [];
-      // NASA sometimes sends total as a number or as an object with a 'value'
-      const total = response.data.hits.total?.value ?? response.data.hits.total ?? 0;
-      return { hits, total };
-    }
-
-    return { hits: [], total: 0 };
-  } catch (error) {
-    console.error('Error searching publications:', error);
-    throw error;
-  }
-};
-
-
-/**
- * Advanced search
- */
 export const advancedSearch = async (filters) => {
   try {
     const params = {
@@ -84,10 +101,15 @@ export const advancedSearch = async (filters) => {
 
     console.log('Advanced search params:', params);
     
-    const response = await axios.get(`${BASE_URL}/search`, { params });
+    const searchUrl = `${BASE_URL}/search`;
+    const response = await axios.get(`https://api.allorigins.win/get`, {
+      params: { url: `${searchUrl}?${new URLSearchParams(params)}` }
+    });
     
-    if (response.data && response.data.hits) {
-      return response.data.hits.hits || [];
+    const data = JSON.parse(response.data.contents);
+    
+    if (data && data.hits) {
+      return data.hits.hits || [];
     }
     
     return [];

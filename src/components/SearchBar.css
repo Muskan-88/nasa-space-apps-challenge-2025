@@ -91,6 +91,24 @@
   transform: none;
 }
 
+.filter-wrapper {
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filter-label {
+  font-weight: 500;
+}
+
+.filter-select {
+  padding: 0.4rem 0.6rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: white;
+}
+
 @media (max-width: 768px) {
   .search-form {
     flex-direction: column;

@@ -4,15 +4,16 @@ import './SearchBar.css';
 
 const SearchBar = ({ onSearch, loading }) => {
   const [query, setQuery] = useState('');
+  const [source, setSource] = useState('all'); // <--- NEW: filter state
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSearch(query);
+    onSearch(query, source); // <--- pass both query & filter
   };
 
   const handleClear = () => {
     setQuery('');
-    onSearch(''); // Clear results
+    onSearch('', source); // clear results but keep filter
   };
 
   return (
@@ -38,6 +39,23 @@ const SearchBar = ({ onSearch, loading }) => {
             </button>
           )}
         </div>
+
+        {/* 🔽 New: Filter dropdown */}
+        <div className="filter-wrapper">
+          <label htmlFor="source" className="filter-label">Data Source:</label>
+          <select
+            id="source"
+            value={source}
+            onChange={(e) => setSource(e.target.value)}
+            disabled={loading}
+            className="filter-select"
+          >
+            <option value="all">All</option>
+            <option value="nasa">NASA OSDR</option>
+            <option value="csv">CSV Publications</option>
+          </select>
+        </div>
+
         <button 
           type="submit" 
           className="search-button"

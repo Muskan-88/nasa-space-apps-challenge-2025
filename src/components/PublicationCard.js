@@ -2,57 +2,66 @@
 import './PublicationCard.css';
 
 const PublicationCard = ({ publication }) => {
-  // The data is in publication._source
   const data = publication._source || publication;
-  
-  console.log('Publication data:', data); // DEBUG - check what fields exist
+  const isFromCSV = data['Data Source Type'] === 'csv';
   
   const handleOpenPublication = () => {
-    const accession = data['Accession'] || data['Study Identifier'] || data['accession'];
-    if (accession) {
-      window.open(`https://osdr.nasa.gov/bio/repo/data/studies/${accession}`, '_blank');
+    if (isFromCSV && data.Link) {
+      // CSV entry - open PMC link
+      window.open(data.Link, '_blank');
+    } else {
+      // NASA entry - open OSDR page
+      const accession = data.Accession;
+      if (accession && !accession.startsWith('PMC-')) {
+        window.open(`https://osdr.nasa.gov/bio/repo/data/studies/${accession}`, '_blank');
+      }
     }
   };
 
-  // Try multiple possible field names
-  const title = data['Study Title'] || data['title'] || data['Study_Title'] || 'Untitled Study';
-  const accession = data['Accession'] || data['Study Identifier'] || data['accession'] || 'N/A';
-  const description = data['Study Description'] || data['description'] || data['Study_Description'] || 'No description available';
-  const organism = data['organism'] || data['Organism'] || null;
-  const assayType = data['Study Assay Technology Type'] || data['assayType'] || null;
-  const authors = data['Study Publication Author List'] || data['authors'] || null;
+  const title = data['Study Title'] || 'Untitled Study';
+  const accession = data.Accession || 'N/A';
+  const description = data['Study Description'] || 'No description available';
+  const organism = data.organism || null;
+  const assayType = data['Study Assay Technology Type'] || null;
+  const authors = data['Study Publication Author List'] || null;
 
   return (
     <div className="publication-card">
       <div className="card-header">
         <h3 className="card-title">{title}</h3>
-        <span className="card-accession">{accession}</span>
+        <div className="card-badges">
+          <span className="card-accession">{accession}</span>
+          {isFromCSV && <span className="source-badge csv-badge">PubMed Central</span>}
+        </div>
       </div>
       
       <p className="card-description">
         {description.length > 200 ? `${description.substring(0, 200)}...` : description}
       </p>
       
-      <div className="card-metadata">
-        {organism && (
-          <span className="metadata-tag">
-            <strong>Organism:</strong> {organism}
-          </span>
-        )}
-        {assayType && (
-          <span className="metadata-tag">
-            <strong>Assay Type:</strong> {assayType}
-          </span>
-        )}
-        {authors && (
-          <span className="metadata-tag metadata-authors">
-            <strong>Authors:</strong> {authors.substring(0, 50)}{authors.length > 50 ? '...' : ''}
-          </span>
-        )}
-      </div>
+      {/* Only show NASA-specific metadata for non-CSV entries */}
+      {!isFromCSV && (
+        <div className="card-metadata">
+          {organism && (
+            <span className="metadata-tag">
+              <strong>Organism:</strong> {organism}
+            </span>
+          )}
+          {assayType && (
+            <span className="metadata-tag">
+              <strong>Assay Type:</strong> {assayType}
+            </span>
+          )}
+          {authors && (
+            <span className="metadata-tag metadata-authors">
+              <strong>Authors:</strong> {authors.substring(0, 50)}{authors.length > 50 ? '...' : ''}
+            </span>
+          )}
+        </div>
+      )}
       
       <button onClick={handleOpenPublication} className="view-button">
-        View Full Dataset →
+        {isFromCSV ? 'Read on PubMed Central →' : 'View Full Dataset →'}
       </button>
     </div>
   );
