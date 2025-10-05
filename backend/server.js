@@ -1,5 +1,5 @@
 const express = require('express');
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+const { CohereClient } = require('cohere-ai');
 const cors = require('cors');
 require('dotenv').config();
 
@@ -7,14 +7,14 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const cohere = new CohereClient({
+  token: 'GX6kcXRmtY8IKIyvawKuzlO3uZYX2vzZrtDJ7kzv'
+});
 
 app.post('/api/summarize', async (req, res) => {
   try {
     const { documentText, sections } = req.body;
     const sectionsList = sections.join(', ');
-    
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
     
     const prompt = `You are analyzing a scientific document about space biology. 
 
@@ -38,9 +38,14 @@ Format your response as JSON with this structure:
 
 Only include the sections that were requested: ${sectionsList}`;
 
-    const result = await model.generateContent(prompt);
-    const response = result.response;
-    const responseText = response.text();
+    const response = await cohere.chat({
+      message: prompt,
+      model: 'command-r-plus-08-2024',
+      max_tokens: 1000,
+      temperature: 0.3
+    });
+    
+    const responseText = response.text;
     
     // Parse JSON from response
     let summaries;
@@ -66,8 +71,16 @@ app.listen(PORT, () => {
 
 app.get('/api/test-models', async (req, res) => {
   try {
-    const models = await genAI.listModels();
-    res.json({ models });
+    // Test Cohere connection with a simple request
+    const response = await cohere.chat({
+      message: 'Hello, this is a test message.',
+      model: 'command-r-plus-08-2024',
+      max_tokens: 10
+    });
+    res.json({ 
+      status: 'Cohere API connected successfully',
+      test_response: response.text 
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

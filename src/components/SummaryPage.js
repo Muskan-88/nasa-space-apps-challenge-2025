@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
-import { summarizeDocument } from '../services/claudeAPI';
+import { summarizeDocument } from '../services/cohereAPI';
 import './SummaryPage.css';
 
 const SummaryPage = () => {
