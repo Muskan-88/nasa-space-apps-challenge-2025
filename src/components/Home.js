@@ -18,8 +18,8 @@ const Home = () => {
   const [totalResults, setTotalResults] = useState(0);
   const PAGE_SIZE = 50; // NASA API limit
 
-  // Initial search
-  const handleSearch = async (newQuery) => {
+  // Inside Home.js
+  const handleSearch = async (newQuery, source = 'all') => {
     if (!newQuery.trim()) {
       setResults([]);
       setSearchPerformed(false);
@@ -33,7 +33,7 @@ const Home = () => {
     setFrom(0);
 
     try {
-      const { hits, total } = await searchPublications(newQuery, 0, PAGE_SIZE);
+      const { hits, total } = await searchPublications(newQuery, 0, PAGE_SIZE, source); // <--- pass source
       setResults(hits);
       setTotalResults(total);
       setFrom(PAGE_SIZE);
@@ -45,6 +45,7 @@ const Home = () => {
       setLoading(false);
     }
   };
+
 
   // Load more results
   const handleLoadMore = async () => {
@@ -82,7 +83,8 @@ const Home = () => {
         )}
 
         <SearchResults 
-          publications={results} 
+          publications={results}
+          totalResults={totalResults} 
           loading={loading}
           searchPerformed={searchPerformed}
           onLoadMore={handleLoadMore}

@@ -1,7 +1,7 @@
 import PublicationCard from './PublicationCard';
 import './SearchResults.css';
 
-const SearchResults = ({ publications, loading, searchPerformed, onLoadMore, hasMore, loadingMore }) => {
+const SearchResults = ({ publications, totalResults, loading, searchPerformed, onLoadMore, hasMore, loadingMore }) => {
   if (loading) {
     return (
       <div className="results-container">
@@ -36,7 +36,9 @@ const SearchResults = ({ publications, loading, searchPerformed, onLoadMore, has
   return (
     <div className="results-container">
       <div className="results-header">
-        <p>{publications.length} result{publications.length !== 1 ? 's' : ''} displayed</p>
+        <p>
+          Showing {publications.length} of {totalResults} result{totalResults !== 1 ? 's' : ''}
+        </p>
       </div>
       <div className="results-grid">
         {publications.map((pub, index) => (
