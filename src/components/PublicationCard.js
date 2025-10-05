@@ -1,7 +1,10 @@
 // src/components/PublicationCard.js
+import { useNavigate } from 'react-router-dom';
 import './PublicationCard.css';
 
 const PublicationCard = ({ publication }) => {
+  // The data is in publication._source
+  const navigate = useNavigate();
   const data = publication._source || publication;
   const isFromCSV = data['Data Source Type'] === 'csv';
   
@@ -17,7 +20,14 @@ const PublicationCard = ({ publication }) => {
       }
     }
   };
-
+  const handleSummarize = () => {
+    // Pass publication data via state
+    navigate(`/summary/${accession}`, { 
+      state: { 
+        publication: data 
+      } 
+    });
+  };
   const title = data['Study Title'] || 'Untitled Study';
   const accession = data.Accession || 'N/A';
   const description = data['Study Description'] || 'No description available';
@@ -39,6 +49,31 @@ const PublicationCard = ({ publication }) => {
         {description.length > 200 ? `${description.substring(0, 200)}...` : description}
       </p>
       
+      <div className="card-metadata">
+        {organism && (
+          <span className="metadata-tag">
+            <strong>Organism:</strong> {organism}
+          </span>
+        )}
+        {assayType && (
+          <span className="metadata-tag">
+            <strong>Assay Type:</strong> {assayType}
+          </span>
+        )}
+        {authors && (
+          <span className="metadata-tag metadata-authors">
+            <strong>Authors:</strong> {authors.substring(0, 50)}{authors.length > 50 ? '...' : ''}
+          </span>
+        )}
+      </div>
+      <div className="card-actions">
+        <button onClick={handleOpenPublication} className="view-button">
+          View Full Dataset →
+        </button>
+        <button onClick={handleSummarize} className="summarize-button">
+          📄 Summarize with AI
+        </button>
+      </div>
       {/* Only show NASA-specific metadata for non-CSV entries */}
       {!isFromCSV && (
         <div className="card-metadata">
