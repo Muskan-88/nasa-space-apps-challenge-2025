@@ -2,11 +2,12 @@
   background: linear-gradient(-45deg, #0a1270, #2d2daa, #1a1a50, #4545c8);
   background-size: 400% 400%;
   animation: gradientBG 15s ease infinite;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
-  padding: 20px;
+  padding: 40px 20px;
+  overflow-y: auto;
 }
 
 @keyframes gradientBG {
@@ -24,7 +25,9 @@
 .content {
   text-align: center;
   color: white;
-  max-width: 800px;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .content h1 {
@@ -35,7 +38,7 @@
 
 .content h2 {
   font-size: 32px;
-  margin-bottom: 32px;
+  margin-bottom: 16px;
   font-weight: 300;
 }
 
@@ -43,9 +46,33 @@
   font-size: 19px;
   line-height: 1.6;
   font-weight: 300;
+  margin-bottom: 40px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.error-message {
+  max-width: 800px;
+  margin: 0 auto 20px;
+  padding: 16px 24px;
+  background: rgba(255, 100, 100, 0.15);
+  border: 1px solid rgba(255, 100, 100, 0.5);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.error-message p {
+  color: rgba(255, 200, 200, 0.95);
+  margin: 0;
+  font-size: 16px;
 }
 
 @media (max-width: 768px) {
+  .home-container {
+    padding: 30px 15px;
+  }
+
   .content h1 {
     font-size: 40px;
   }

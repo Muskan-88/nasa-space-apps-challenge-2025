@@ -1,17 +1,94 @@
-import React from "react";
-import "./Home.css";
+// src/components/Home.js
+import React, { useState } from 'react';
+import SearchBar from './SearchBar';
+import SearchResults from './SearchResults';
+import { searchPublications } from '../services/osdrApi';
+import './Home.css';
 
 const Home = () => {
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [error, setError] = useState(null);
+  const [searchPerformed, setSearchPerformed] = useState(false);
+
+  // pagination state
+  const [query, setQuery] = useState('');
+  const [from, setFrom] = useState(0);
+  const [totalResults, setTotalResults] = useState(0);
+  const PAGE_SIZE = 50; // NASA API limit
+
+  // Initial search
+  const handleSearch = async (newQuery) => {
+    if (!newQuery.trim()) {
+      setResults([]);
+      setSearchPerformed(false);
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    setSearchPerformed(true);
+    setQuery(newQuery);
+    setFrom(0);
+
+    try {
+      const { hits, total } = await searchPublications(newQuery, 0, PAGE_SIZE);
+      setResults(hits);
+      setTotalResults(total);
+      setFrom(PAGE_SIZE);
+    } catch (err) {
+      console.error('Search error:', err);
+      setError('Failed to fetch results. Please try again.');
+      setResults([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Load more results
+  const handleLoadMore = async () => {
+    setLoadingMore(true);
+    try {
+      const { hits } = await searchPublications(query, from, PAGE_SIZE);
+      setResults((prev) => [...prev, ...hits]);
+      setFrom((prev) => prev + PAGE_SIZE);
+    } catch (err) {
+      console.error('Error loading more:', err);
+      setError('Could not load more results.');
+    } finally {
+      setLoadingMore(false);
+    }
+  };
+
+  const hasMore = results.length < totalResults;
+
   return (
     <div className="home-container">
       <div className="content">
-        <h1>I'm George</h1>
-        <h2>Welcome to My Website</h2>
+        <h1>NASA OSDR Publications</h1>
+        <h2>Search the Open Science Data Repository</h2>
         <p>
-          I'm a software engineering student from Victoria, BC. I'm passionate 
-          about front-end development and crafting intuitive, user-friendly 
-          UI/UX experiences.
+          Explore space biology research datasets from NASA's Open Science Data Repository. 
+          Search by keywords, organisms, authors, and more.
         </p>
+
+        <SearchBar onSearch={handleSearch} loading={loading || loadingMore} />
+
+        {error && (
+          <div className="error-message">
+            <p>{error}</p>
+          </div>
+        )}
+
+        <SearchResults 
+          publications={results} 
+          loading={loading}
+          searchPerformed={searchPerformed}
+          onLoadMore={handleLoadMore}
+          hasMore={hasMore}
+          loadingMore={loadingMore}
+        />
       </div>
     </div>
   );
