@@ -11,7 +11,7 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.12.2",
     "bootstrap": "^5.3.8",
-    "cohere": "^1.1.1",
+    "cohere-ai": "^7.14.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
