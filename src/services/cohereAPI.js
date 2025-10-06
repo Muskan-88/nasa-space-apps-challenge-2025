@@ -1,10 +1,8 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001';
-
 export const summarizeDocument = async (documentText, sections) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/api/summarize`, {
+    const response = await axios.post('/api/summarize', {
       documentText,
       sections
     });

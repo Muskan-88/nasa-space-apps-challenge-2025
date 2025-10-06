@@ -17,8 +17,7 @@ export const searchPublications = async (searchQuery, from = 0, size = 50, sourc
         console.log(`NASA OSDR Search via backend: term="${searchQuery}" size=${size} from=${from}`);
         
         // Use backend proxy to avoid CORS issues
-        const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001';
-        const osdrResponse = await axios.get(`${API_BASE_URL}/api/nasa-search`, {
+        const response = await axios.get('/api/nasa-search', {
           params: {
             term: searchQuery,
             type: 'cgene',
@@ -28,7 +27,7 @@ export const searchPublications = async (searchQuery, from = 0, size = 50, sourc
           timeout: 15000,
         });
 
-        const osdrData = osdrResponse.data;
+        const osdrData = response.data;
         osdrHits = osdrData?.hits?.hits || [];
         osdrTotal = osdrData?.hits?.total?.value ?? osdrData?.hits?.total ?? 0;
         console.log(`NASA OSDR via backend: ${osdrHits.length} results out of ${osdrTotal} total`);
@@ -67,8 +66,7 @@ export const getAllStudies = async () => {
   try {
     console.log('Fetching all studies...');
     
-    const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001';
-    const response = await axios.get(`${API_BASE_URL}/api/nasa-search`, {
+    const response = await axios.get('/api/nasa-search', {
       params: {
         term: '*',
         type: 'cgene',
@@ -110,8 +108,7 @@ export const advancedSearch = async (filters) => {
 
     console.log('Advanced search params:', params);
     
-    const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001';
-    const response = await axios.get(`${API_BASE_URL}/api/nasa-search`, {
+    const response = await axios.get('/api/nasa-search', {
       params: params,
       timeout: 15000
     });
