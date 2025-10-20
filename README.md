@@ -2,7 +2,7 @@
 
 An intelligent search engine that leverages AI to make NASA's scientific publications more accessible and understandable. This project combines NASA's Open Repository API with Cohere's AI capabilities to provide smart search and customizable summarization of scientific papers.
 
-Visit at: https://aura-nasa-space-apps-challenge.vercel.app/
+Try the search engine at: https://aura-nasa-space-apps-challenge.vercel.app/
 
 ## Key Features
 - **Smart Search**: Search through 608+ NASA scientific publications using natural language queries
@@ -10,6 +10,10 @@ Visit at: https://aura-nasa-space-apps-challenge.vercel.app/
 - **Interactive Interface**: User-friendly interface for exploring NASA's research repository
 - **Customizable Summary Length**: Adjust summary length based on your needs
 - **Publication Details**: Access full publication metadata, including authors, dates, and citations
+
+<img width="2830" height="1511" alt="image" src="https://github.com/user-attachments/assets/24acfac5-0429-4adf-844f-8bc6057009b1" />
+<img width="2819" height="1483" alt="image" src="https://github.com/user-attachments/assets/20b9b6ec-a462-4440-bb23-7405d3bb2f19" />
+<img width="2833" height="1526" alt="image" src="https://github.com/user-attachments/assets/52ade26d-aec9-49e2-afce-1bd682f55a94" />
 
 ## Technology Stack
 ### Frontend
