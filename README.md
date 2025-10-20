@@ -11,7 +11,7 @@ Try the search engine at: https://aura-nasa-space-apps-challenge.vercel.app/
 - **Customizable Summary Length**: Adjust summary length based on your needs
 - **Publication Details**: Access full publication metadata, including authors, dates, and citations
 
-![Image](https://github.com/user-attachments/assets/230291be-c680-4ebf-9a3d-4c334f4407cf)<br>
+![Image](https://github.com/user-attachments/assets/48e62a00-a688-4519-a187-89a414f499be)<br>
 ![Image](https://github.com/user-attachments/assets/8e79372a-6e4b-4727-b97d-08580614ab2a)<br>
 ![Image](https://github.com/user-attachments/assets/701ebe51-3f79-42bc-8ad1-a083e0f3ca25)<br>
 ![Image](https://github.com/user-attachments/assets/54830df6-2068-4084-ac52-1ba1b9097389)<br>
